@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Perfil del Agente - Glokey</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<header class="header">
+  <nav class="navbar container">
+    <a href="index.html" class="logo">
+      <img src="Logo_Glokey02.png" alt="Logo Glokey" />
+    </a>
+    <button class="menu-toggle" aria-label="Abrir menú">&#9776;</button>
+    <ul class="nav-links">
+      <li><a href="marketplace.html">Marketplace</a></li>
+      <li><a href="guia.html">Guía de Internacionalización</a></li>
+      <li><a href="nosotros.html">Nosotros</a></li>
+      <li><a href="servicios-adicionales.html">Servicios Adicionales</a></li>
+    </ul>
+    <a href="login.html" class="btn-login">Iniciar sesión</a>
+  </nav>
+</header>
+
+
+  <main class="container agente-main">
+  <h2 id="nombreAgente"></h2>
+
+  <div class="agente-info-container">
+    <div class="agente-datos">
+      <p><strong>País:</strong> <span id="paisAgente"></span></p>
+      <p><strong>Especialidades:</strong> <span id="sectoresAgente"></span></p>
+      <p><strong>Idiomas:</strong> <span id="idiomasAgente"></span></p>
+      <p><strong>Email:</strong> <span id="emailAgente"></span></p>
+      <p><strong>Teléfono:</strong> <span id="telefonoAgente"></span></p>
+    </div>
+    <div class="agente-imagen">
+      <img id="imagenPais" src="" alt="Imagen del país" />
+    </div>
+  </div>
+
+  <div class="contactar-container">
+    <button id="btnContactar" class="btn-primary">Contactar con este agente</button>
+    <p id="mensajeContacto" class="mensaje-oculto">El agente ha sido notificado. Dispone de un tiempo de 36 h en contestar. Por diferencias horarias el tiempo estimado son 6 h. Gracias por su paciencia.</p>
+  </div>
+</main>
+
+  <footer class="footer">
+    <p>© 2025 Glokey. Todos los derechos reservados.</p>
+  </footer>
+
+  <script src="agentes_glokey_actualizado.js"></script>
+  <script>
+    function obtenerIdiomas(pais) {
+      const idiomas = {
+        "España": ["Español"],
+        "México": ["Español"],
+        "Colombia": ["Español"],
+        "Chile": ["Español"],
+        "Perú": ["Español"],
+        "Argentina": ["Español"],
+        "Estados Unidos": ["Inglés", "Español"],
+        "Alemania": ["Alemán", "Inglés"],
+        "Francia": ["Francés", "Inglés"],
+        "Italia": ["Italiano", "Español"],
+        "Portugal": ["Portugués", "Español"]
+      };
+      return idiomas[pais] || ["Español"];
+    }
+
+    const params = new URLSearchParams(window.location.search);
+    const nombreAgente = params.get('nombre');
+
+    const agente = agentes.find(a => a.nombre === nombreAgente);
+    if (agente) {
+  document.getElementById('nombreAgente').textContent = agente.nombre;
+  document.getElementById('paisAgente').textContent = agente.pais;
+  document.getElementById('sectoresAgente').textContent = agente.sectores.join(', ');
+  document.getElementById('idiomasAgente').textContent = obtenerIdiomas(agente.pais).join(', ');
+  document.getElementById('emailAgente').textContent = agente.email;
+  document.getElementById('telefonoAgente').textContent = agente.telefono;
+
+  const imagenPais = document.getElementById('imagenPais');
+  imagenPais.src = `img/${agente.pais.toLowerCase().replace(/\s/g, '-')}.png`;
+  imagenPais.alt = `Imagen de ${agente.pais}`;
+}
+
+document.getElementById('btnContactar').addEventListener('click', () => {
+  document.getElementById('mensajeContacto').style.display = 'block';
+});
+
+  </script>
+  <script>
+  const hamburgerBtn = document.getElementById('hamburgerBtn');
+  const navLinks = document.getElementById('navLinks');
+
+  hamburgerBtn.addEventListener('click', () => {
+    navLinks.classList.toggle('show');
+  });
+</script>
+<script>
+  const menuToggle = document.querySelector('.menu-toggle');
+  const navbar = document.querySelector('.navbar');
+  menuToggle.addEventListener('click', () => {
+    navbar.classList.toggle('active');
+  });
+</script>
+</body>
+</html>

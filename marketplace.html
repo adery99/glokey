@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Marketplace - Glokey</title>
+  <meta name="description" content="Encuentra agentes comerciales por país, sector y nivel de experiencia." />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<header class="header">
+  <nav class="navbar container">
+    <a href="index.html" class="logo">
+      <img src="Logo_Glokey02.png" alt="Logo Glokey" />
+    </a>
+    <ul class="nav-links">
+      <li><a href="marketplace.html">Marketplace</a></li>
+      <li><a href="guia.html">Guía de Internacionalización</a></li>
+      <li><a href="nosotros.html">Nosotros</a></li>
+      <li><a href="servicios-adicionales.html">Servicios Adicionales</a></li>
+    </ul>
+    <a href="login.html" class="btn-login">Iniciar sesión</a>
+  </nav>
+</header>
+
+<main class="container marketplace-main">
+  <h2>Marketplace de Agentes Comerciales</h2>
+
+  <div class="search-filters">
+    <input type="text" id="searchInput" placeholder="Buscar agente comercial..." />
+    <select id="filterPais">
+      <option value="">País</option>
+    </select>
+    <select id="filterSector">
+      <option value="">Sector</option>
+    </select>
+    <select id="filterEstrellas">
+      <option value="">Estrellas mínimas</option>
+      <option value="1">★ y más</option>
+      <option value="2">★★ y más</option>
+      <option value="3">★★★ y más</option>
+      <option value="4">★★★★ y más</option>
+      <option value="5">★★★★★</option>
+    </select>
+  </div>
+
+  <div id="battlecardsGrid" class="battlecards-grid"></div>
+</main>
+
+<footer class="footer">
+  <p>© 2025 Glokey. Todos los derechos reservados.</p>
+</footer>
+
+<script src="agentes_glokey_actualizado.js"></script>
+<script>
+  const battlecardsGrid = document.getElementById('battlecardsGrid');
+  const searchInput = document.getElementById('searchInput');
+  const filterPais = document.getElementById('filterPais');
+  const filterSector = document.getElementById('filterSector');
+  const filterEstrellas = document.getElementById('filterEstrellas');
+
+  const uniqueValues = (array, key) => [...new Set(array.flatMap(item => item[key]))].sort();
+
+  // Inicializar filtros únicos
+  function initFilters() {
+    const paises = uniqueValues(agentes, ['pais']);
+    paises.forEach(pais => {
+      const option = document.createElement('option');
+      option.value = pais;
+      option.textContent = pais;
+      filterPais.appendChild(option);
+    });
+
+    const sectores = uniqueValues(agentes, ['sectores']);
+    sectores.forEach(sector => {
+      const option = document.createElement('option');
+      option.value = sector;
+      option.textContent = sector;
+      filterSector.appendChild(option);
+    });
+  }
+
+  // Detectar idioma probable según país
+  function obtenerIdiomas(pais) {
+    const idiomas = {
+      "España": ["Español"],
+      "México": ["Español"],
+      "Colombia": ["Español"],
+      "Chile": ["Español"],
+      "Perú": ["Español"],
+      "Argentina": ["Español"],
+      "Estados Unidos": ["Inglés", "Español"],
+      "Alemania": ["Alemán", "Inglés"],
+      "Francia": ["Francés", "Inglés"],
+      "Italia": ["Italiano", "Español"],
+      "Portugal": ["Portugués", "Español"]
+    };
+    return idiomas[pais] || ["Español"];
+  }
+
+  function renderAgents(agents) {
+    battlecardsGrid.innerHTML = '';
+    if (agents.length === 0) {
+      battlecardsGrid.innerHTML = '<p>No se encontraron agentes con esos filtros.</p>';
+      return;
+    }
+
+    agents.forEach(agent => {
+      const card = document.createElement('article');
+      card.className = 'battlecard';
+      card.innerHTML = `
+        <h3>${agent.nombre}</h3>
+        <div class="stars">${'★'.repeat(agent.estrellas)}${'☆'.repeat(5 - agent.estrellas)}</div>
+        <p><strong>País:</strong> ${agent.pais}</p>
+        <p><strong>Especialidades:</strong> ${agent.sectores.join(', ')}</p>
+        <div class="battlecard-info">
+          <p><strong>Idiomas:</strong> ${obtenerIdiomas(agent.pais).join(', ')}</p>
+          <p>Email: ${agent.email}</p>
+          <p>Tel: ${agent.telefono}</p>
+        </div>
+      `;
+      card.onclick = () => verAgente(agent.nombre);
+      battlecardsGrid.appendChild(card);
+    });
+  }
+
+  function filterAndRender() {
+    const text = searchInput.value.toLowerCase();
+    const pais = filterPais.value;
+    const sector = filterSector.value;
+    const estrellasMin = parseInt(filterEstrellas.value) || 0;
+
+    const filtered = agentes.filter(agent => {
+      const matchText = agent.nombre.toLowerCase().includes(text);
+      const matchPais = !pais || agent.pais === pais;
+      const matchSector = !sector || agent.sectores.includes(sector);
+      const matchEstrellas = agent.estrellas >= estrellasMin;
+      return matchText && matchPais && matchSector && matchEstrellas;
+    });
+
+    renderAgents(filtered);
+  }
+
+  [searchInput, filterPais, filterSector, filterEstrellas].forEach(el => el.addEventListener('input', filterAndRender));
+
+  initFilters();
+  renderAgents(agentes);
+
+  function verAgente(nombre) {
+  const encodedName = encodeURIComponent(nombre);
+  window.location.href = `agente.html?nombre=${encodedName}`;
+}
+
+</script>
+
+</body>
+</html>
